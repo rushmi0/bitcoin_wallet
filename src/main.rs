@@ -1,6 +1,6 @@
-use bitcoin_wallet::mnemonic::add;
+use bitcoin_wallet::mnemonic::print_words;
 
 fn main() {
     println!("Hello, world!");
-    add::print_words();
+    print_words();
 }
