@@ -1,4 +1,4 @@
-pub mod word_list;
 pub mod language;
+pub mod secret_word;
 
-pub use word_list::print_words;
+pub use secret_word::SecretWord;
