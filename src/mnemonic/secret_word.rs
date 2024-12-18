@@ -63,17 +63,28 @@ impl SecretWord {
     }
 
 
-    fn checksum(&self, binary: String) -> Vec<u8> {
+    fn checksum(&self, binary: String) -> String {
         let bytes = binary
             .as_bytes()
             .chunks(8)
             .map(|chunk| u8::from_str_radix(std::str::from_utf8(chunk).unwrap(), 2).unwrap())
             .collect::<Vec<u8>>();
 
-         let z = bytes.len();
         let size = bytes.len() * 8;
 
-        Sha256::digest(&bytes).to_vec()
+        let entropy_hash = Sha256::digest(&bytes).to_vec();
+
+        let hash_binary = entropy_hash
+            .iter()
+            .map(|byte| format!("{:08b}", byte)) // แปลงแต่ละไบต์เป็นบิต 8 ตัว
+            .collect::<String>();
+
+        // 5. ย่อ binary string เฉพาะส่วน checksum (size / 32)
+        let checksum_size = size / 32;
+        let checksum = &hash_binary[0..checksum_size];
+
+        // 6. ผสาน entropy (binary) และ checksum
+        binary + checksum
     }
 
 
