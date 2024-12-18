@@ -1,4 +1,4 @@
-pub const WORD_LIST: [&str; 2048] = [
+pub const ENG_WORD_LIST: [&str; 2048] = [
     "abandon",
     "ability",
     "able",

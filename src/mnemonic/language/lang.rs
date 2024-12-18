@@ -1,4 +1,5 @@
 #[derive(Debug)]
 pub enum LANG {
-    ENG
+    ENG,
+    JP
 }
