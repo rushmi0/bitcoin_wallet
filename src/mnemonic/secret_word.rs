@@ -1,6 +1,7 @@
+use rand::random;
+use sha2::{Sha256, Digest};
 
 use crate::mnemonic::language::lang::LANG;
-use rand::random;
 use crate::mnemonic::language::{ENG_WORD_LIST, JP_WORD_LIST};
 
 #[derive(Debug)]
@@ -21,7 +22,7 @@ impl SecretWord {
     fn load_wordlist(&self) -> Vec<String> {
         let word_list: &[&str; 2048] = match self.language {
             LANG::ENG => &ENG_WORD_LIST,
-            LANG::JP => &JP_WORD_LIST,
+            LANG::JP => &JP_WORD_LIST
         };
 
         word_list.iter().map(|&word| word.to_string()).collect()
@@ -61,7 +62,25 @@ impl SecretWord {
         binary_string
     }
 
-    pub fn display(&self) {
-        println!("{:?}", self.load_wordlist())
+
+    fn checksum(&self, binary: String) -> Vec<u8> {
+        let bytes = binary
+            .as_bytes()
+            .chunks(8)
+            .map(|chunk| u8::from_str_radix(std::str::from_utf8(chunk).unwrap(), 2).unwrap())
+            .collect::<Vec<u8>>();
+
+         let z = bytes.len();
+        let size = bytes.len() * 8;
+
+        Sha256::digest(&bytes).to_vec()
     }
+
+
+    pub fn display(&self) {
+        //println!("{:?}", self.load_wordlist());
+        println!("{}", self.entropy());
+        println!("{:?} {:?}", self.checksum(self.entropy()), self.checksum(self.entropy()).len());
+    }
+
 }

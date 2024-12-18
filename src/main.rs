@@ -5,4 +5,5 @@ fn main() {
     let i = SecretWord::new(128, LANG::JP);
     println!("{:?}", &i);
     i.display();
+
 }
