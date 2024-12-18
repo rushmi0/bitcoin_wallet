@@ -4,12 +4,13 @@ use rand::random;
 
 #[derive(Debug)]
 pub struct SecretWord {
-    strength: u128,
+    strength: usize,
     language: LANG,
 }
 
 impl SecretWord {
-    pub fn new(strength: u128, language: LANG) -> Self {
+
+    pub fn new(strength: usize, language: LANG) -> Self {
         Self { strength, language }
     }
 
@@ -17,11 +18,11 @@ impl SecretWord {
         WORD_LIST.iter().map(|&word| word.to_string()).collect()
     }
 
-    pub fn entropy(&self, bit_length: usize) {
+    pub fn entropy(&self) {
         // คำนวณจำนวนไบต์ (byte) ที่ต้องการใช้ในการเก็บข้อมูลสุ่ม
-        // แปลงจาก bit_length เป็น byte_length โดยใช้ (bit_length + 7) / 8
-        // เช่น ถ้า bit_length = 15 จะได้ byte_length = 2 เพราะ 15 บิต ต้องใช้ 2 ไบต์ (8 บิตต่อไบต์)
-        let byte_length = (bit_length + 7) / 8;
+        // แปลงจาก self.strength (bit_length) เป็น byte_length โดยใช้ (strength + 7) / 8
+        // เช่น ถ้า strength = 15 จะได้ byte_length = 2 เพราะ 15 บิต ต้องใช้ 2 ไบต์ (8 บิตต่อไบต์)
+        let byte_length = (self.strength + 7) / 8;
 
         // สร้าง buffer (ตัวแปรเก็บข้อมูล) สำหรับเก็บค่าไบต์แบบสุ่ม
         // เริ่มต้นเป็นเวกเตอร์ขนาด byte_length ทั้งหมดมีค่าเริ่มต้นเป็น 0
@@ -40,21 +41,17 @@ impl SecretWord {
             .map(|byte| format!("{:08b}", byte)) // แปลงไบต์แต่ละตัวไปเป็น binary string ความยาว 8 บิต
             .collect::<String>(); // รวมค่า binary string ทุกตัวเข้าด้วยกันให้กลายเป็นสตริงใหญ่
 
-        // ตัดสตริงฐานสองให้มีความยาวตรงตามจำนวน bit_length ที่ผู้ใช้กำหนด
-        // ตัวอย่าง: ถ้าสร้าง binary string ความยาว 16 บิต แต่กำหนด bit_length = 10
+        // ตัดสตริงฐานสองให้มีความยาวตรงตามจำนวน strength (จำนวนบิตตามที่กำหนด)
+        // ตัวอย่าง: ถ้าสร้าง binary string ความยาว 16 บิต แต่กำหนด strength = 10
         // เราจะตัดให้เหลือเพียง 10 บิตแรก
-        if binary_string.len() > bit_length {
-            binary_string.truncate(bit_length); // ลดความยาวของ binary_string ให้เท่ากับ bit_length
+        if binary_string.len() > self.strength {
+            binary_string.truncate(self.strength); // ลดความยาวของ binary_string ให้เท่ากับ strength
         }
 
         // แสดงผลลัพธ์
         // - สตริงฐานสองที่ได้จากการสุ่ม
-        // - จำนวนบิตในสตริง (เท่ากับ bit_length เสมอเมื่อทำการ truncate แล้ว)
-        println!(
-            "Binary String: {} | Length: {}",
-            binary_string,
-            binary_string.len()
-        );
+        // - จำนวนบิตในสตริง (เท่ากับ self.strength เสมอเมื่อทำการ truncate แล้ว)
+        println!("Binary String: {} | Length: {}", binary_string, binary_string.len());
     }
 
     pub fn display(&self) {
