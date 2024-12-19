@@ -2,5 +2,6 @@
 pub enum LANG {
     ENG,
     JP,
-    FR
+    FR,
+    KO
 }
