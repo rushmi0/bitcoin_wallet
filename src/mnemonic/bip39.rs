@@ -1,7 +1,7 @@
 use std::str::from_utf8;
 use rand::random;
 use sha2::{Sha256, Digest};
-
+use unicode_normalization::UnicodeNormalization;
 use crate::mnemonic::language::LANG;
 use crate::mnemonic::language::{ENG_WORD_LIST, JP_WORD_LIST};
 
@@ -26,7 +26,7 @@ impl BIP39 {
             LANG::JP => &JP_WORD_LIST
         };
 
-        word_list.iter().map(|&word| word.to_string()).collect()
+        word_list.iter().map(|&word| word.nfc().collect::<String>()).collect()
     }
 
     pub fn entropy(&self) -> String {
