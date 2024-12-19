@@ -1,9 +1,9 @@
 use bitcoin_wallet::mnemonic::language::LANG;
-use bitcoin_wallet::mnemonic::secret_word::SecretWord;
+use bitcoin_wallet::mnemonic::BIP39;
 
 fn main() {
-    let i = SecretWord::new(128, LANG::JP);
+    let i = BIP39::new(128, LANG::ENG);
     println!("{:?}", &i);
-    i.display();
+    i.mnemonic()
 
 }

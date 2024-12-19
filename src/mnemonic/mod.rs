@@ -1,4 +1,4 @@
 pub mod language;
-pub mod secret_word;
+pub mod bip39;
 
-pub use secret_word::SecretWord;
+pub use bip39::BIP39;

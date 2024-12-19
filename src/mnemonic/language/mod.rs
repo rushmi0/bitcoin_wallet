@@ -1,6 +1,6 @@
-pub mod english;
-pub mod japanese;
-pub mod lang;
+mod english;
+mod japanese;
+mod lang;
 
 pub use lang::LANG;
 

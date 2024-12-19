@@ -1,16 +1,17 @@
+use std::str::from_utf8;
 use rand::random;
 use sha2::{Sha256, Digest};
 
-use crate::mnemonic::language::lang::LANG;
+use crate::mnemonic::language::LANG;
 use crate::mnemonic::language::{ENG_WORD_LIST, JP_WORD_LIST};
 
 #[derive(Debug)]
-pub struct SecretWord {
+pub struct BIP39 {
     strength: usize,
     language: LANG,
 }
 
-impl SecretWord {
+impl BIP39 {
 
     pub fn new(strength: usize, language: LANG) -> Self {
         Self {
@@ -58,16 +59,15 @@ impl SecretWord {
             binary_string.truncate(self.strength);
         }
 
-        // คืนค่าสตริงฐานสองที่ได้
         binary_string
     }
 
 
-    fn checksum(&self, binary: String) -> String {
+    fn binary_checksum(&self, binary: &String) -> String {
         let bytes = binary
             .as_bytes()
             .chunks(8)
-            .map(|chunk| u8::from_str_radix(std::str::from_utf8(chunk).unwrap(), 2).unwrap())
+            .map(|chunk| u8::from_str_radix(from_utf8(chunk).unwrap(), 2).unwrap())
             .collect::<Vec<u8>>();
 
         let size = bytes.len() * 8;
@@ -76,22 +76,47 @@ impl SecretWord {
 
         let hash_binary = entropy_hash
             .iter()
-            .map(|byte| format!("{:08b}", byte)) // แปลงแต่ละไบต์เป็นบิต 8 ตัว
+            .map(|byte| format!("{:08b}", byte))
             .collect::<String>();
 
-        // 5. ย่อ binary string เฉพาะส่วน checksum (size / 32)
         let checksum_size = size / 32;
         let checksum = &hash_binary[0..checksum_size];
 
-        // 6. ผสาน entropy (binary) และ checksum
-        binary + checksum
+        checksum.to_string()
     }
 
+    pub fn mnemonic(&self) {
+        let entropy = self.entropy();
+        let checksum = self.binary_checksum(&entropy);
 
-    pub fn display(&self) {
-        //println!("{:?}", self.load_wordlist());
-        println!("{}", self.entropy());
-        println!("{:?} {:?}", self.checksum(self.entropy()), self.checksum(self.entropy()).len());
+        // รวมค่า entropy และ checksum เป็น raw_binary
+        let raw_binary = entropy.clone() + &checksum;
+
+        // ตัด raw_binary ออกเป็นชิ้นย่อยขนาด 11 ตัวอักษร
+        let chunks: Vec<&str> = raw_binary
+            .as_bytes()
+            .chunks(11)
+            .map(|chunk| from_utf8(chunk).unwrap())
+            .collect();
+
+        // แปลงแต่ละชิ้นจาก string binary เป็นเลขฐาน 10
+        let word_indexes: Vec<u16> = chunks
+            .iter()
+            .map(|chunk| u16::from_str_radix(chunk, 2).unwrap())
+            .collect();
+
+        // แมป word_indexes ไปเป็นคำใน wordlist
+        let mnemonic_words: Vec<String> = word_indexes
+            .iter()
+            .map(|&index| self.load_wordlist()[index as usize].clone())
+            .collect();
+
+
+        println!("Entropy: {}", &entropy);
+        println!("Raw binary chunks: {:?}", chunks);
+        println!("Decimal values: {:?}", word_indexes);
+        println!("Mnemonic phrase: {:?}", mnemonic_words.join(", "));
     }
+
 
 }
