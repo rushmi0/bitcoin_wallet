@@ -2,8 +2,7 @@ use std::str::from_utf8;
 use rand::random;
 use sha2::{Sha256, Digest};
 use unicode_normalization::UnicodeNormalization;
-use crate::mnemonic::language::LANG;
-use crate::mnemonic::language::{ENG_WORD_LIST, JP_WORD_LIST};
+use crate::mnemonic::language::{ENG_WORD_LIST, JP_WORD_LIST, FR_WORD_LIST, LANG};
 
 #[derive(Debug)]
 pub struct BIP39 {
@@ -23,7 +22,8 @@ impl BIP39 {
     fn load_wordlist(&self) -> Vec<String> {
         let word_list: &[&str; 2048] = match self.language {
             LANG::ENG => &ENG_WORD_LIST,
-            LANG::JP => &JP_WORD_LIST
+            LANG::JP => &JP_WORD_LIST,
+            LANG::FR => &FR_WORD_LIST
         };
 
         word_list.iter().map(|&word| word.nfc().collect::<String>()).collect()
