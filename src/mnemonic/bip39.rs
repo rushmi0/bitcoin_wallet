@@ -2,7 +2,15 @@ use std::str::from_utf8;
 use rand::random;
 use sha2::{Sha256, Digest};
 use unicode_normalization::UnicodeNormalization;
-use crate::mnemonic::language::{LANG, ENG_WORD_LIST, JP_WORD_LIST, FR_WORD_LIST, KO_WORD_LIST, SP_WORD_LIST};
+use crate::mnemonic::language::{
+    LANG,
+    ENG_WORD_LIST,
+    JP_WORD_LIST,
+    FR_WORD_LIST,
+    KO_WORD_LIST,
+    SP_WORD_LIST,
+    PT_WORD_LIST
+};
 
 #[derive(Debug)]
 pub struct BIP39 {
@@ -25,7 +33,8 @@ impl BIP39 {
             LANG::JP => &JP_WORD_LIST,
             LANG::FR => &FR_WORD_LIST,
             LANG::KO => &KO_WORD_LIST,
-            LANG::SP => &SP_WORD_LIST
+            LANG::SP => &SP_WORD_LIST,
+            LANG::PT => &PT_WORD_LIST
         };
 
         word_list.iter().map(|&word| word.nfc().collect::<String>()).collect()

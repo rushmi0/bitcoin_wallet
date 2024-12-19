@@ -7,4 +7,5 @@ fn main() {
     BIP39::new(128, LANG::FR).mnemonic();
     BIP39::new(128, LANG::KO).mnemonic();
     BIP39::new(128, LANG::SP).mnemonic();
+    BIP39::new(128, LANG::PT).mnemonic();
 }
